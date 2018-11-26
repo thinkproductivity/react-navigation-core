@@ -130,9 +130,8 @@ export const createPathParser = (
           extendedPathRe && extendedPathRe.exec(pathToResolve);
         let childAction = null;
         if (extendedMatch && childRouter) {
-          const restOfPath = getRestOfPath(extendedMatch, extendedPathReKeys);
           childAction = childRouter.getActionForPathAndParams(
-            restOfPath,
+            pathToResolve,
             inputParams
           );
         }
@@ -153,11 +152,10 @@ export const createPathParser = (
         extendedPathRe && extendedPathRe.exec(pathToResolve);
 
       if (extendedMatch && extendedMatch.length) {
-        const restOfPath = getRestOfPath(extendedMatch, extendedPathReKeys);
         let childAction = null;
         if (childRouter) {
           childAction = childRouter.getActionForPathAndParams(
-            restOfPath,
+            pathToResolve,
             inputParams
           );
         }
