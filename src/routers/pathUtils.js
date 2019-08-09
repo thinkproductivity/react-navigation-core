@@ -25,7 +25,9 @@ export const getParamsFromPath = (inputParams, pathMatch, pathMatchKeys) => {
         }
       }
 
-      paramsOut[paramName] = decodedMatchResult || matchResult;
+      if (decodedMatchResult || matchResult) {
+        paramsOut[paramName] = decodedMatchResult || matchResult;
+      }
       return paramsOut;
     },
     {
@@ -136,9 +138,17 @@ export const createPathParser = (
           );
         }
 
+        const defaultRouteParams =
+          routeConfigs[routeName] && routeConfigs[routeName].params
+            ? routeConfigs[routeName].params
+            : {};
+
         return NavigationActions.navigate({
           routeName,
-          params: getParamsFromPath(inputParams, exactMatch, exactReKeys),
+          params: {
+            ...defaultRouteParams,
+            ...getParamsFromPath(inputParams, exactMatch, exactReKeys),
+          },
           action: childAction,
         });
       }
@@ -162,13 +172,22 @@ export const createPathParser = (
         if (!childAction) {
           continue;
         }
+
+        const defaultRouteParams =
+          routeConfigs[routeName] && routeConfigs[routeName].params
+            ? routeConfigs[routeName].params
+            : {};
+
         return NavigationActions.navigate({
           routeName,
-          params: getParamsFromPath(
-            inputParams,
-            extendedMatch,
-            extendedPathReKeys
-          ),
+          params: {
+            ...defaultRouteParams,
+            ...getParamsFromPath(
+              inputParams,
+              extendedMatch,
+              extendedPathReKeys
+            ),
+          },
           action: childAction,
         });
       }
