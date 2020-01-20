@@ -37,10 +37,6 @@ export const getParamsFromPath = (inputParams, pathMatch, pathMatchKeys) => {
   );
   return params;
 };
-const getRestOfPath = (pathMatch, pathMatchKeys) => {
-  const rest = pathMatch[pathMatchKeys.findIndex(k => k.asterisk) + 1];
-  return rest;
-};
 
 const determineDelimiter = (uri, uriPrefix) => {
   if (Array.isArray(uriPrefix)) {
@@ -133,7 +129,7 @@ export const createPathParser = (
     // Attempt to match `pathToResolve` with a route in this router's routeConfigs, deferring to child routers
 
     for (const [routeName, path] of paths) {
-      const { exactRe, exactReKeys, extendedPathRe, extendedPathReKeys } = path;
+      const { exactRe, exactReKeys, extendedPathRe } = path;
       const childRouter = childRouters[routeName];
 
       const exactMatch = exactRe && exactRe.exec(pathToResolve);
