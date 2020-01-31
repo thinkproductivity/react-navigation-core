@@ -1,17 +1,21 @@
 import * as NavigationActions from '../../NavigationActions';
 import * as SwitchActions from '../../routers/SwitchActions';
+import * as StackActions from '../../routers/StackActions';
 
 // A simple helper that makes it easier to write basic routing tests
 // We generally want to apply one action after the other and check router returns correct state
 // it's often convenient to manipulate a structure that keeps the router state to avoid
 // creating many state1, state2, state3 local variables which are prone to typos...
 
-const defaultInitAction = {
-  type: NavigationActions.INIT,
+const defaultOptions = {
+  skipInitializeState: false,
 };
 
-export const getRouterTestHelper = (router, initAction = defaultInitAction) => {
-  let state = router.getStateForAction(initAction);
+export const getRouterTestHelper = (router, options = defaultOptions) => {
+  let state =
+    options && options.skipInitializeState
+      ? undefined
+      : router.getStateForAction({ type: NavigationActions.INIT });
 
   const applyAction = action => {
     state = router.getStateForAction(action, state);
@@ -31,9 +35,20 @@ export const getRouterTestHelper = (router, initAction = defaultInitAction) => {
       ...otherActionAttributes,
     });
 
-  const back = () =>
+  const back = key =>
     applyAction({
       type: NavigationActions.BACK,
+      key,
+    });
+
+  const pop = () =>
+    applyAction({
+      type: StackActions.POP,
+    });
+
+  const popToTop = () =>
+    applyAction({
+      type: StackActions.POP_TO_TOP,
     });
 
   const getState = () => state;
@@ -42,7 +57,16 @@ export const getRouterTestHelper = (router, initAction = defaultInitAction) => {
     return getSubStateRecursive(state, level);
   };
 
-  return { applyAction, navigateTo, jumpTo, back, getState, getSubState };
+  return {
+    applyAction,
+    navigateTo,
+    jumpTo,
+    back,
+    pop,
+    popToTop,
+    getState,
+    getSubState,
+  };
 };
 
 const getSubStateRecursive = (state, level = 1) => {
